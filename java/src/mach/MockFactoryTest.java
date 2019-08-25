@@ -8,8 +8,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 import static org.junit.Assert.*;
-import static mach.Mocks.no;
-import static mach.Mocks.verify;
+import static mach.Mocks.*;
 import static org.junit.Assume.assumeTrue;
 
 public class MockFactoryTest {
@@ -69,6 +68,7 @@ public class MockFactoryTest {
 
         factory.returns(expected); mock.methodWithNoArgs();
 
+        go();
         String actual = mock.methodWithNoArgs();
         assertSame(expected,actual);
     }
@@ -80,6 +80,7 @@ public class MockFactoryTest {
 
         factory.returns(expected); mock.methodThatReturnsBoolean();
 
+        go();
         boolean actual = mock.methodThatReturnsBoolean();
         assertSame(expected,actual);
     }
@@ -92,6 +93,7 @@ public class MockFactoryTest {
         factory.returns("first"); mock.methodWithNoArgs();
         factory.returns(expected); mock.methodWithNoArgs();
 
+        go();
         String actual = mock.methodWithNoArgs();
         assertSame(expected,actual);
     }
@@ -116,6 +118,7 @@ public class MockFactoryTest {
         factory.returns("no args"); mock.methodWithNoArgs();
         factory.returns("one arg"); mock.methodWithOneArg("1");
 
+        go();
         assertEquals("no args",mock.methodWithNoArgs());
         assertEquals("one arg", mock.methodWithOneArg("1"));
     }
@@ -126,6 +129,7 @@ public class MockFactoryTest {
         String expected = "next";
         factory.returns(expected); mock.methodWithNoArgs();
 
+        go();
         String actual = mock.methodWithNoArgs();
         assertSame(expected,actual);
     }
@@ -148,6 +152,7 @@ public class MockFactoryTest {
         Sample mock = newMockSample();
         factory.returns(""); mock.methodWithNoArgs();
 
+        go();
         mock.methodWithNoArgs();
 
         verify();
@@ -162,6 +167,7 @@ public class MockFactoryTest {
         String result = "pudding";
         factory.returns(result); mock.methodWithOneArg(arg);
 
+        go();
         mock.methodWithOneArg(arg);
 
         verify();
@@ -176,6 +182,7 @@ public class MockFactoryTest {
         String expected = "expected";
         factory.returns(expected); factory.wild(null); mock.methodWithOneArg(null);
 
+        go();
         String actual = mock.methodWithOneArg(random());
 
         assertSame(expected, actual);
@@ -196,6 +203,7 @@ public class MockFactoryTest {
         String passedArg = "some random string";
         factory.returns("don't care"); factory.wild(null); mock.methodWithOneArg(null);
 
+        go();
         mock.methodWithOneArg(passedArg);
 
         verify();
@@ -211,6 +219,7 @@ public class MockFactoryTest {
         String passedArg = "some random string";
         factory.returns("don't care"); factory.wild(null); mock.methodWithOneArg(null);
 
+        go();
         mock.methodWithOneArg(passedArg);
 
         Object capturedArg = factory.arg();
@@ -238,6 +247,7 @@ public class MockFactoryTest {
         Sample mock = newMockSample();
 
         factory.returns("???"); mock.methodWithOneArg("right");
+        Phase.current = Phase.invoke;
 
         try {
             mock.methodWithOneArg("wrong");

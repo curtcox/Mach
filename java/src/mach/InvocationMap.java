@@ -1,7 +1,6 @@
 package mach;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * A special map, since ordinary maps don't support multiple equivalent keys.

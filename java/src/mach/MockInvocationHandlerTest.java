@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+import static mach.Phase.invoke;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static mach.Phase.current;
@@ -60,6 +61,7 @@ public class MockInvocationHandlerTest {
         testObject.invoke(proxy, method, new Object[]{"right"});
 
         try {
+            current = invoke;
             testObject.invoke(proxy,method,new Object[] {"wrong"});
         } catch (AssertionError e) {
             org.junit.ComparisonFailure failure = (org.junit.ComparisonFailure) e;
@@ -78,6 +80,7 @@ public class MockInvocationHandlerTest {
         int expected = 42;
         factory.returns(expected);
         testObject.invoke(proxy,method,args);
+        current = invoke;
         int actual = (Integer) testObject.invoke(proxy,method,args);
 
         assertEquals(expected, actual);
@@ -89,6 +92,7 @@ public class MockInvocationHandlerTest {
         String expected = "value";
         factory.returns(expected);
         testObject.invoke(proxy,method,args("name"));
+        current = invoke;
         String actual = (String) testObject.invoke(proxy,method,args("name"));
 
         assertEquals(expected,actual);

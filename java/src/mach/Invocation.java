@@ -1,9 +1,7 @@
 package mach;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.lang.reflect.*;
+import java.util.*;
 
 /**
  * A method invocation with parameters.

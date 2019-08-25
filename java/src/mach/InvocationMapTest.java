@@ -1,6 +1,5 @@
 package mach;
 
-import junit.framework.TestCase;
 import org.junit.Test;
 
 import java.lang.reflect.Method;

@@ -17,7 +17,6 @@ import static org.junit.Assume.assumeTrue;
 
 public class MocksTest {
 
-    String value = "use this";
     Sample sample;
 
     interface Sample {
@@ -56,6 +55,7 @@ public class MocksTest {
         String expected = "expected";
         returns(expected);  sample.getValue();
 
+        go();
         String actual = sample.getValue();
 
         assertSame(expected,actual);
@@ -67,6 +67,7 @@ public class MocksTest {
         String expected = "2nd";
         returns(expected);  sample.getNext("1st");
 
+        go();
         String actual = sample.getNext("1st");
 
         assertSame(expected,actual);
@@ -78,6 +79,7 @@ public class MocksTest {
         String expected = "2nd";
         returns(expected);  wild("*"); sample.getNext("*");
 
+        go();
         String actual = sample.getNext("1st");
 
         assertSame(expected,actual);
@@ -89,6 +91,7 @@ public class MocksTest {
         String expected = "2nd";
         returns(expected);  wild(null); sample.getNext(null);
 
+        go();
         String actual = sample.getNext("1st");
 
         assertSame(expected,actual);
@@ -100,6 +103,7 @@ public class MocksTest {
         returns("don't care, but needed");  wild(null); sample.getNext(null);
 
         String expected = "arg value used";
+        go();
         sample.getNext(expected);
 
         verify();
@@ -125,6 +129,7 @@ public class MocksTest {
         Sample sample = mock("name",Sample.class);
         returns("");  sample.getValue();
 
+        go();
         sample.getValue();
 
         verify();
@@ -162,6 +167,44 @@ public class MocksTest {
 
         try {
             sample.getValue();
+        } catch (AssertionError e) {
+            return;
+        }
+        fail();
+    }
+
+    @Test
+    public void no_fails_when_method_with_argument_invoked() {
+        Sample sample = mock("name",Sample.class);
+
+        no(); sample.getNext("forbidden");
+
+        try {
+            sample.getNext("forbidden");
+        } catch (AssertionError e) {
+            return;
+        }
+        fail();
+    }
+
+    @Test
+    public void no_does_not_fail_when_valid_argument_invoked() {
+        Sample sample = mock("name",Sample.class);
+        _(""); sample.getNext("OK");
+        no(); _(""); sample.getNext("forbidden");
+
+        sample.getNext("OK");
+    }
+
+    @Test
+    public void no_fails_when_invalid_argument_invoked() {
+        Sample sample = mock("name",Sample.class);
+        _(""); sample.getNext("OK");
+        no(); _(""); sample.getNext("forbidden");
+
+        try {
+            go();
+            sample.getNext("forbidden");
         } catch (AssertionError e) {
             return;
         }

@@ -132,4 +132,11 @@ public final class Mocks {
         current = no;
     }
 
+    /**
+     * Start verifying things didn't happen.
+     */
+    public static void go() {
+        current = invoke;
+    }
+
 }

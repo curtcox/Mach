@@ -2,14 +2,11 @@ package mach;
 
 import org.junit.ComparisonFailure;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static mach.Phase.current;
-import static mach.Phase.invoke;
+import static org.junit.Assert.*;
+import static mach.Phase.*;
 
 /**
  * Handles the method invocation for a single mock.
@@ -70,7 +67,7 @@ final class MockInvocationHandler
     private Object useFactoryValue() {
         Object value = factory.result;
         factory.result = null;
-        current = invoke;
+        current = null;
         factory.wildcards = null;
         return value;
     }

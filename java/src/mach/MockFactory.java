@@ -1,7 +1,6 @@
 package mach;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
+import java.lang.reflect.*;
 
 import static mach.Phase.current;
 /**
