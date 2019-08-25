@@ -14,7 +14,7 @@ import static org.junit.Assume.assumeTrue;
 
 public class MockFactoryTest {
 
-    MockFactory testObject;
+    MockFactory factory;
     interface Sample {
         String methodWithNoArgs();
         String methodWithOneArg(String arg);
@@ -28,7 +28,7 @@ public class MockFactoryTest {
         assumeTrue(ShouldRun.Mach);
         methodWithNoArgs = method(Sample.class, "methodWithNoArgs");
         methodWithOneArg = method(Sample.class, "methodWithOneArg");
-        testObject = new MockFactory();
+        factory = new MockFactory();
     }
 
     private static Method method(Class c, String name) {
@@ -51,7 +51,7 @@ public class MockFactoryTest {
     }
 
     private Sample newMockSample() {
-        return testObject.mock(Sample.class, "name");
+        return factory.mock(Sample.class, "name");
     }
 
     @Test
@@ -67,7 +67,7 @@ public class MockFactoryTest {
         Sample mock = newMockSample();
         String expected = "next";
 
-        testObject.returns(expected); mock.methodWithNoArgs();
+        factory.returns(expected); mock.methodWithNoArgs();
 
         String actual = mock.methodWithNoArgs();
         assertSame(expected,actual);
@@ -78,7 +78,7 @@ public class MockFactoryTest {
         Sample mock = newMockSample();
         boolean expected = true;
 
-        testObject.returns(expected); mock.methodThatReturnsBoolean();
+        factory.returns(expected); mock.methodThatReturnsBoolean();
 
         boolean actual = mock.methodThatReturnsBoolean();
         assertSame(expected,actual);
@@ -89,8 +89,8 @@ public class MockFactoryTest {
         Sample mock = newMockSample();
         String expected = "next";
 
-        testObject.returns("first"); mock.methodWithNoArgs();
-        testObject.returns(expected); mock.methodWithNoArgs();
+        factory.returns("first"); mock.methodWithNoArgs();
+        factory.returns(expected); mock.methodWithNoArgs();
 
         String actual = mock.methodWithNoArgs();
         assertSame(expected,actual);
@@ -113,8 +113,8 @@ public class MockFactoryTest {
     public void returns_works_with_multiple_whens_on_different_methods() {
         Sample mock = newMockSample();
 
-        testObject.returns("no args"); mock.methodWithNoArgs();
-        testObject.returns("one arg"); mock.methodWithOneArg("1");
+        factory.returns("no args"); mock.methodWithNoArgs();
+        factory.returns("one arg"); mock.methodWithOneArg("1");
 
         assertEquals("no args",mock.methodWithNoArgs());
         assertEquals("one arg", mock.methodWithOneArg("1"));
@@ -124,7 +124,7 @@ public class MockFactoryTest {
     public void invoke_makes_mock_return_value_on_next_invocation() {
         Sample mock = newMockSample();
         String expected = "next";
-        testObject.returns(expected); mock.methodWithNoArgs();
+        factory.returns(expected); mock.methodWithNoArgs();
 
         String actual = mock.methodWithNoArgs();
         assertSame(expected,actual);
@@ -146,7 +146,7 @@ public class MockFactoryTest {
     @Test
     public void verify_does_not_fail_when_method_invoked() {
         Sample mock = newMockSample();
-        testObject.returns(""); mock.methodWithNoArgs();
+        factory.returns(""); mock.methodWithNoArgs();
 
         mock.methodWithNoArgs();
 
@@ -160,7 +160,7 @@ public class MockFactoryTest {
 
         String arg = "jello";
         String result = "pudding";
-        testObject.returns(result); mock.methodWithOneArg(arg);
+        factory.returns(result); mock.methodWithOneArg(arg);
 
         mock.methodWithOneArg(arg);
 
@@ -174,7 +174,7 @@ public class MockFactoryTest {
         Sample mock = newMockSample();
 
         String expected = "expected";
-        testObject.returns(expected); testObject.wild(null); mock.methodWithOneArg(null);
+        factory.returns(expected); factory.wild(null); mock.methodWithOneArg(null);
 
         String actual = mock.methodWithOneArg(random());
 
@@ -183,10 +183,10 @@ public class MockFactoryTest {
 
     @Test
     public void wild_null_is_interpreted_as_an_object_array_with_one_null_value() {
-        testObject.returns("");
-        testObject.wild(null);
-        assertEquals(1,testObject.wildcards.length);
-        assertNull(testObject.wildcards[0]);
+        factory.returns("");
+        factory.wild(null);
+        assertEquals(1, factory.wildcards.length);
+        assertNull(factory.wildcards[0]);
     }
 
     @Test
@@ -194,12 +194,12 @@ public class MockFactoryTest {
         Sample mock = newMockSample();
 
         String passedArg = "some random string";
-        testObject.returns("don't care"); testObject.wild(null); mock.methodWithOneArg(null);
+        factory.returns("don't care"); factory.wild(null); mock.methodWithOneArg(null);
 
         mock.methodWithOneArg(passedArg);
 
         verify();
-        testObject.wild(null); mock.methodWithOneArg(null); Object capturedArg = testObject.arg();
+        factory.wild(null); mock.methodWithOneArg(null); Object capturedArg = factory.arg();
 
         assertSame(passedArg, capturedArg);
     }
@@ -209,11 +209,11 @@ public class MockFactoryTest {
         Sample mock = newMockSample();
 
         String passedArg = "some random string";
-        testObject.returns("don't care"); testObject.wild(null); mock.methodWithOneArg(null);
+        factory.returns("don't care"); factory.wild(null); mock.methodWithOneArg(null);
 
         mock.methodWithOneArg(passedArg);
 
-        Object capturedArg = testObject.arg();
+        Object capturedArg = factory.arg();
         assertSame(passedArg, capturedArg);
     }
 
@@ -237,7 +237,7 @@ public class MockFactoryTest {
     public void invoke_fails_when_method_invoked_with_wrong_value() {
         Sample mock = newMockSample();
 
-        testObject.returns("???"); mock.methodWithOneArg("right");
+        factory.returns("???"); mock.methodWithOneArg("right");
 
         try {
             mock.methodWithOneArg("wrong");
